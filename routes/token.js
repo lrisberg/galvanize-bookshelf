@@ -1,10 +1,15 @@
 'use strict';
 
 const express = require('express');
-
-// eslint-disable-next-line new-cap
+const knex = require('../knex');
+const humps = require('humps');
 const router = express.Router();
 
-// YOUR CODE HERE
+
+router.post('/token', (req, res, next) => {
+  let credentials = req.body;
+  res.cookie('Authorization', '1')
+  res.end();
+})
 
 module.exports = router;

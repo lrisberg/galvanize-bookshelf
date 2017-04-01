@@ -7,12 +7,20 @@ const router = express.Router();
 
 
 router.get('/favorites', (req, res, next) => {
-  knex('favorites')
-    .join('books', 'books.id', '=', 'favorites.book_id')
-    .where('favorites.user_id', 1)
-    .then(books => {
-      res.send(humps.camelizeKeys(books));
-    });
+  let cookies = req.cookies;
+  if (!cookies.Authorization) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(401);
+    res.send('Unauthorized');
+  }
+  else {
+    knex('favorites')
+      .join('books', 'books.id', '=', 'favorites.book_id')
+      .where('favorites.user_id', 1)
+      .then(books => {
+        res.send(humps.camelizeKeys(books));
+      });
+  }
 });
 
 router.get('/favorites/check', (req, res, next) => {
