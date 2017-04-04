@@ -13,13 +13,28 @@ router.get('/books', (req, res, next) => {
     });
 });
 
+function notFound(res) {
+  res.setHeader("Content-Type", "text/plain");
+  res.status(404);
+  res.send('Not Found');
+}
+
 router.get('/books/:id', (req, res, next) => {
   let id = req.params.id;
-  knex('books')
-    .where('id', id)
-    .then(books => {
-      res.send(humps.camelizeKeys(books[0]));
-    });
+  if (isNaN(parseInt(id))) {
+    notFound(res);
+  }
+  else {
+    knex('books')
+      .where('id', id)
+      .then(books => {
+        if (books.length === 0) {
+          notFound(res);
+        } else {
+          res.send(humps.camelizeKeys(books[0]));
+        }
+      });
+  }
 });
 
 router.post('/books', (req, res, next) => {
