@@ -55,6 +55,16 @@ app.use((_req, res) => {
   res.sendStatus(404);
 });
 
+//VALIDATIONS
+app.use((err, _req, res, _next) => {
+  if (err.status) {
+    return res.status(err.status).send(err);
+  }
+
+  console.error(err);
+  res.sendStatus(500);
+});
+
 // eslint-disable-next-line max-params
 app.use((err, _req, res, _next) => {
   if (err.output && err.output.statusCode) {

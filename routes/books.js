@@ -5,6 +5,10 @@ const knex = require('../knex');
 const humps = require('humps');
 const router = express.Router();
 
+//validations
+const ev = require('express-validation');
+const validations = require('../validations/books');
+
 router.get('/books', (req, res, next) => {
   knex('books')
     .orderBy('title')
@@ -53,7 +57,7 @@ router.post('/books', (req, res, next) => {
     })
 })
 
-router.patch('/books/:id', (req, res, next) => {
+router.patch('/books/:id', ev(validations.patch), (req, res, next) => {
   let id = req.params.id
   let body = req.body;
   knex('books')
@@ -69,7 +73,6 @@ router.patch('/books/:id', (req, res, next) => {
     .then(book => {
       res.send(humps.camelizeKeys(book[0]))
     })
-
 })
 
 router.delete('/books/:id', (req, res, next) => {
