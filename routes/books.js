@@ -23,6 +23,15 @@ function notFound(res) {
   res.send('Not Found');
 }
 
+ function notBlank(thing) {
+//   if (!body[thing]) {
+//     res.setHeader("Content-Type", "text/plain");
+//     res.status(400);
+//     res.send(`${thing} must not be blank`);
+//     return;
+//   }
+ }
+
 router.get('/books/:id', (req, res, next) => {
   let id = req.params.id;
   if (isNaN(parseInt(id))) {
@@ -43,6 +52,42 @@ router.get('/books/:id', (req, res, next) => {
 
 router.post('/books', (req, res, next) => {
   let body = req.body;
+
+  if (!body.title) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(400);
+    res.send('Title must not be blank');
+    return;
+  }
+
+  if (!body.author) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(400);
+    res.send('Author must not be blank');
+    return;
+  }
+
+  if (!body.genre) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(400);
+    res.send('Genre must not be blank');
+    return;
+  }
+
+  if (!body.description) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(400);
+    res.send('Description must not be blank');
+    return;
+  }
+
+  if (!body.coverUrl) {
+    res.setHeader("Content-Type", "text/plain");
+    res.status(400);
+    res.send('Cover URL must not be blank');
+    return;
+  }
+
   knex('books')
     .returning(['id', 'title', 'author', 'genre', 'description', 'cover_url'])
     .insert({
