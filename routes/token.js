@@ -7,6 +7,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-as-promised');
 
+const SECRET = process.env.JWT_KEY || 'shhhh';
+
 
 router.get('/token', (req, res, next) => {
   if (req.cookies.token) {
@@ -23,12 +25,6 @@ router.post('/token', (req, res, next) => {
   let email = credentials.email;
   let password = credentials.password;
 
-  // if (email === '') {
-  //   res.setHeader("Content-Type", "plain/text");
-  //   res.send('Email must not be blank');
-  //   return;
-  // }
-
   knex('users')
     .select(['id', 'email', 'first_name', 'last_name', 'hashed_password'])
     .where('email', email)
@@ -43,7 +39,7 @@ router.post('/token', (req, res, next) => {
         .then(() => {
           const token = jwt.sign({
             userId: users[0].id
-          }, 'shhhh');
+          }, SECRET);
           res.cookie('token', token, {
             httpOnly: true
           });

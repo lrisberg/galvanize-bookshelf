@@ -4,11 +4,13 @@ const express = require('express');
 const knex = require('../knex');
 const humps = require('humps');
 const router = express.Router();
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+
+const SECRET = process.env.JWT_KEY || 'shhhh';
 
 function checkAuth(req, res, next) {
   if (req.cookies.token) {
-    jwt.verify(req.cookies.token, 'shhhh', function(err, decoded) {
+    jwt.verify(req.cookies.token, SECRET, function(err, decoded) {
       if (err) {
         res.setHeader("Content-Type", "text/plain");
         res.status(401);
