@@ -23,15 +23,6 @@ function notFound(res) {
   res.send('Not Found');
 }
 
-function notBlank(thing) {
-  //   if (!body[thing]) {
-  //     res.setHeader("Content-Type", "text/plain");
-  //     res.status(400);
-  //     res.send(`${thing} must not be blank`);
-  //     return;
-  //   }
-}
-
 router.get('/books/:id', (req, res, next) => {
   let id = req.params.id;
   if (isNaN(parseInt(id))) {
