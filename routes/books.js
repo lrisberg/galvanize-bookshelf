@@ -23,21 +23,20 @@ function notFound(res) {
   res.send('Not Found');
 }
 
- function notBlank(thing) {
-//   if (!body[thing]) {
-//     res.setHeader("Content-Type", "text/plain");
-//     res.status(400);
-//     res.send(`${thing} must not be blank`);
-//     return;
-//   }
- }
+function notBlank(thing) {
+  //   if (!body[thing]) {
+  //     res.setHeader("Content-Type", "text/plain");
+  //     res.status(400);
+  //     res.send(`${thing} must not be blank`);
+  //     return;
+  //   }
+}
 
 router.get('/books/:id', (req, res, next) => {
   let id = req.params.id;
   if (isNaN(parseInt(id))) {
     notFound(res);
-  }
-  else {
+  } else {
     knex('books')
       .where('id', id)
       .then(books => {
@@ -105,28 +104,54 @@ router.post('/books', (req, res, next) => {
 router.patch('/books/:id', ev(validations.patch), (req, res, next) => {
   let id = req.params.id
   let body = req.body;
+
+  if (isNaN(parseInt(id))) {
+    notFound(res);
+    return;
+  }
+
   knex('books')
     .where('id', id)
-    .returning(['id', 'title', 'author', 'genre', 'description', 'cover_url'])
-    .update({
-      title: body.title,
-      author: body.author,
-      genre: body.genre,
-      description: body.description,
-      cover_url: body.coverUrl
-    })
-    .then(book => {
-      res.send(humps.camelizeKeys(book[0]))
+    .then((books) => {
+      if (books.length === 0) {
+        notFound(res);
+      } else {
+        knex('books')
+          .returning(['id', 'title', 'author', 'genre', 'description', 'cover_url'])
+          .where('id', id)
+          .update({
+            title: body.title,
+            author: body.author,
+            genre: body.genre,
+            description: body.description,
+            cover_url: body.coverUrl
+          })
+          .then(books => {
+            res.send(humps.camelizeKeys(books[0]))
+          })
+      }
     })
 })
 
 router.delete('/books/:id', (req, res, next) => {
+  let id = req.params.id;
+
+  if (isNaN(parseInt(id))) {
+    notFound(res);
+    return;
+  }
+
   knex('books')
     .returning(["title", "author", "genre", "description", "cover_url"])
     .where('id', req.params.id)
     .del()
-    .then(book => {
-      res.send(humps.camelizeKeys(book[0]));
+    .then(books => {
+      if (books.length === 0) {
+        notFound(res);
+      }
+      else {
+        res.send(humps.camelizeKeys(books[0]));
+      }
     })
 })
 
